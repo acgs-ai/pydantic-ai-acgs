@@ -1176,7 +1176,7 @@ typing = [
 
 [package.metadata]
 requires-dist = [
-    { name = "acgs-lite", specifier = ">=3.0.1,<4" },
+    { name = "acgs-lite", specifier = ">=3.0.1,<5" },
     { name = "pydantic-ai-slim", specifier = ">=2.16.0,<3" },
 ]
 
