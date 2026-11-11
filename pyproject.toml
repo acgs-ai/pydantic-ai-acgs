@@ -27,7 +27,7 @@ classifiers = [
 ]
 dependencies = [
     "pydantic-ai-slim>=2.16.0,<3",
-    "acgs-lite>=3.0.1,<4",
+    "acgs-lite>=3.0.1,<5",
 ]
 
 [project.urls]

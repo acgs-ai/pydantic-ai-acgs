@@ -26,8 +26,14 @@ The package is a thin adapter over the public `acgs-lite` API.
 pip install pydantic-ai-acgs
 ```
 
-Requires Python 3.10 or later, `pydantic-ai-slim>=2.16.0,<3` and `acgs-lite>=3.0.1`. (Pydantic AI 2.55 and later
+Requires Python 3.10 or later, `pydantic-ai-slim>=2.16.0,<3` and `acgs-lite>=3.0.1,<5`. (Pydantic AI 2.55 and later
 need Python 3.11.) Install the model provider you use as usual, for example `pip install "pydantic-ai-slim[openai]"`.
+
+acgs-lite 4 is a major release. Its production profile of `GovernedCallable` requires an Ed25519
+receipt signer, governed payloads are JSON-only, and `GovernedAgent` no longer passes per-call keyword arguments to
+rule conditions (see the [acgs-lite changelog](https://github.com/acgs-ai/acgs-lite/blob/main/CHANGELOG.md)). This
+adapter works with both majors, but a fresh environment installs the newest version allowed. To stay on 3.x, also
+require `"acgs-lite<4"`, for example `pip install pydantic-ai-acgs "acgs-lite<4"`.
 
 ## Usage
 
