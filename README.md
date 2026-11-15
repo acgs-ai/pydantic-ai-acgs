@@ -34,7 +34,7 @@ need Python 3.11.) Install the model provider you use as usual, for example `pip
 | Component | Supported range | 0.2.0 validation |
 |---|---|---|
 | acgs-lite | `>=3.0.1,<5` | 4.0.0 tested via `uv.lock` and the default environment; 3.0.1 floor tested by the CI `test-min` job |
-| Pydantic AI | `pydantic-ai-slim>=2.16.0,<3` | 2.59.0 in the default environment; 2.16.0 floor in `test-min` |
+| Pydantic AI | `pydantic-ai-slim>=2.16.0,<3` | 2.59.0 in the locked environment on Python 3.11+ (2.54.0 on 3.10); 2.16.0 floor in `test-min` |
 | Python | `>=3.10` | CI covers 3.10–3.14; strict typing targets 3.10 |
 
 The adapter formats tool arguments as text and calls `GovernanceEngine.validate`. It does not select the
