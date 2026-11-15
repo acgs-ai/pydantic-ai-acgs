@@ -5,8 +5,10 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
+import runpy
 import subprocess
 import sys
 import textwrap
@@ -36,6 +38,28 @@ def test_quickstart_output_matches_readme() -> None:
 
 def test_readme_embeds_the_quickstart_verbatim() -> None:
     assert QUICKSTART.read_text(encoding="utf-8") in _blocks("python")
+
+
+def test_deny_and_audit_runs_offline_without_api_keys(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    for key in list(os.environ):
+        if key.endswith("API_KEY"):
+            monkeypatch.delenv(key)
+    # Register every variable the example sets so monkeypatch restores the original environment.
+    monkeypatch.setenv("OTEL_SDK_DISABLED", "true")
+    monkeypatch.setenv("PYDANTIC_AI_NO_BANNER", "1")
+    # pytest-socket disables network access for this in-process execution.
+    in_own_thread(lambda: runpy.run_path(str(ROOT / "examples" / "deny_and_audit.py"), run_name="__main__"))
+    execution, audit = capsys.readouterr().out.split("Audit trail (application decisions):\n")
+    assert execution == "Executed record_note: The meeting starts at noon.\n"
+    decisions = [json.loads(line) for line in audit.splitlines()]
+    assert [decision["verdict"] for decision in decisions] == ["allow", "allow", "deny"]
+    assert [decision["tool_name"] for decision in decisions] == ["record_note"] * 3
+    assert [decision["rule_ids"] for decision in decisions] == [[], [], ["ACGS-006"]]
+    assert all(decision["error"] is None for decision in decisions)
+    assert "Blocked by" in decisions[-1]["reason"]
+    assert "demo-secret" not in audit
 
 
 def test_every_readme_python_block_runs(capsys: pytest.CaptureFixture[str]) -> None:

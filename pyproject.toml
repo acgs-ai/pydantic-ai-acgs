@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pydantic-ai-acgs"
-version = "0.1.0"
+version = "0.2.0"
 description = "ACGS rule-based tool-call governance for Pydantic AI agents, as a capability"
 readme = "README.md"
 requires-python = ">=3.10"

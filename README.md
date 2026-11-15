@@ -29,11 +29,37 @@ pip install pydantic-ai-acgs
 Requires Python 3.10 or later, `pydantic-ai-slim>=2.16.0,<3` and `acgs-lite>=3.0.1,<5`. (Pydantic AI 2.55 and later
 need Python 3.11.) Install the model provider you use as usual, for example `pip install "pydantic-ai-slim[openai]"`.
 
+### Compatibility
+
+| Component | Supported range | 0.2.0 validation |
+|---|---|---|
+| acgs-lite | `>=3.0.1,<5` | 4.0.0 tested via `uv.lock` and the default environment; 3.0.1 floor tested by the CI `test-min` job |
+| Pydantic AI | `pydantic-ai-slim>=2.16.0,<3` | 2.59.0 in the default environment; 2.16.0 floor in `test-min` |
+| Python | `>=3.10` | CI covers 3.10–3.14; strict typing targets 3.10 |
+
+The adapter formats tool arguments as text and calls `GovernanceEngine.validate`. It does not select the
+production authorization profile or issue signed execution receipts. Nested JSON-native arguments and
+bytes/bytearray scalar formatting are covered by compatibility tests.
+
 acgs-lite 4 is a major release. Its production profile of `GovernedCallable` requires an Ed25519
 receipt signer, governed payloads are JSON-only, and `GovernedAgent` no longer passes per-call keyword arguments to
 rule conditions (see the [acgs-lite changelog](https://github.com/acgs-ai/acgs-lite/blob/main/CHANGELOG.md)). This
 adapter works with both majors, but a fresh environment installs the newest version allowed. To stay on 3.x, also
 require `"acgs-lite<4"`, for example `pip install pydantic-ai-acgs "acgs-lite<4"`.
+
+### Offline deny-and-audit example
+
+Run [examples/deny_and_audit.py](examples/deny_and_audit.py) without an API key or network access:
+
+```bash
+uv run --no-sync python examples/deny_and_audit.py
+```
+
+A scripted `FunctionModel` requests one allowed note and one denied note. Only the allowed tool executes, then
+the example prints an application decision trail with tool names, verdicts, reasons and rule IDs. An allowed call
+is checked twice (after validation and before execution); the denied call stops at the first check. The trail
+therefore contains two allow entries and one deny entry. It omits argument values and stays in memory; it is
+neither a signed receipt nor a durable engine audit log.
 
 ## Usage
 
